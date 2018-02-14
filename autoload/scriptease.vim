@@ -217,6 +217,23 @@ function! scriptease#filterop(type) abort
   endtry
 endfunction
 
+function! scriptease#cmdop(type) abort
+  let reg_save = @@
+  try
+    let expr = s:opfunc(a:type)
+    let @@ = matchstr(expr, '^\_s\+').scriptease#dump(execute(s:gsub(expr,'\n%(\s*\\)=',''))).matchstr(expr, '\_s\+$')
+    if @@ !~# '^\n*$'
+      normal! gvp
+    endif
+  catch /^.*/
+    echohl ErrorMSG
+    echo v:errmsg
+    echohl NONE
+  finally
+    let @@ = reg_save
+  endtry
+endfunction
+
 nnoremap <silent> <Plug>ScripteaseFilter :<C-U>set opfunc=scriptease#filterop<CR>g@
 xnoremap <silent> <Plug>ScripteaseFilter :<C-U>call scriptease#filterop(visualmode())<CR>
 if empty(mapcheck('g!', 'n'))
@@ -225,6 +242,16 @@ if empty(mapcheck('g!', 'n'))
 endif
 if empty(mapcheck('g!', 'x'))
   xmap g! <Plug>ScripteaseFilter
+endif
+
+nnoremap <silent> <Plug>ScripteaseCmd :<C-U>set opfunc=scriptease#cmdop<CR>g@
+xnoremap <silent> <Plug>ScripteaseCmd :<C-U>call scriptease#cmdop(visualmode())<CR>
+if empty(mapcheck('g:', 'n'))
+  nmap g: <Plug>ScripteaseCmd
+  nmap g:: <Plug>ScripteaseCmd_
+endif
+if empty(mapcheck('g:', 'x'))
+  xmap g: <Plug>ScripteaseCmd
 endif
 
 " Section: :Verbose

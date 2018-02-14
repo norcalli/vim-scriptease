@@ -93,6 +93,16 @@ if empty(mapcheck('g!', 'x'))
   xmap g! <Plug>ScripteaseFilter
 endif
 
+nnoremap <silent> <Plug>ScripteaseCmd :<C-U>set opfunc=scriptease#cmdop<CR>g@
+xnoremap <silent> <Plug>ScripteaseCmd :<C-U>call scriptease#cmdop(visualmode())<CR>
+if empty(mapcheck('g:', 'n'))
+  nmap g: <Plug>ScripteaseCmd
+  nmap g:: <Plug>ScripteaseCmd_
+endif
+if empty(mapcheck('g:', 'x'))
+  xmap g: <Plug>ScripteaseCmd
+endif
+
 nnoremap <silent> <Plug>ScripteaseSynnames :<C-U>exe scriptease#synnames_map(v:count)<CR>
 if empty(mapcheck('zS', 'n'))
   nmap zS <Plug>ScripteaseSynnames
